@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "com.zeeesea.textureeditor.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"SpriteContentsAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
