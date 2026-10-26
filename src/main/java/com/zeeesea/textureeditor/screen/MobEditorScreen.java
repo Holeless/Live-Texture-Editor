@@ -48,7 +48,10 @@ public class MobEditorScreen extends AbstractEditorScreen {
          if (savedPixels != null && savedDims != null && savedDims[0] == baseW && savedDims[1] == baseH) {
             this.canvas = new PixelCanvas(savedDims[0], savedDims[1], savedPixels);
          } else {
-            this.canvas = new PixelCanvas(baseW, baseH, basePixels);
+            // If another mod (e.g. Steve Everything) has replaced this mob's texture with a dynamic one, edit that
+            // one so the mob shows up with its Steve look instead of the vanilla texture.
+            int[][] live = readLiveTexture(this.textureId, baseW, baseH);
+            this.canvas = new PixelCanvas(baseW, baseH, live != null ? live : basePixels);
          }
       }
 
@@ -56,6 +59,28 @@ public class MobEditorScreen extends AbstractEditorScreen {
          this.canvas = new PixelCanvas(64, 64);
          this.originalPixels = new int[64][64];
       }
+   }
+
+   /** Pixels of a runtime-registered (DynamicTexture) replacement for this texture, or null if it is the stock one. */
+   private static int[][] readLiveTexture(net.minecraft.resources.ResourceLocation id, int w, int h) {
+      try {
+         net.minecraft.client.renderer.texture.AbstractTexture t = Minecraft.getInstance().getTextureManager().getTexture(id);
+         if (t instanceof net.minecraft.client.renderer.texture.DynamicTexture dt && dt.getPixels() != null) {
+            NativeImage img = dt.getPixels();
+            if (img.getWidth() != w || img.getHeight() != h) {
+               return null;
+            }
+            int[][] px = new int[w][h];
+            for (int x = 0; x < w; x++) {
+               for (int y = 0; y < h; y++) {
+                  px[x][y] = ImageColorCompat.readArgb(img, x, y);
+               }
+            }
+            return px;
+         }
+      } catch (Throwable ignored) {
+      }
+      return null;
    }
 
    @Override

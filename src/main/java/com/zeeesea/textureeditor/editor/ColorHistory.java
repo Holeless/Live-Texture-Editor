@@ -17,7 +17,9 @@ public class ColorHistory {
    }
 
    public void addColor(int color) {
-      this.history.remove(color);
+      // Box it: List.remove(int) removes by INDEX, which threw IndexOutOfBounds for every ARGB color
+      // (the crash when clicking a pixel with pencil/brush/fill/line).
+      this.history.remove(Integer.valueOf(color));
       this.history.add(0, color);
 
       while (this.history.size() > MAX_HISTORY) {
