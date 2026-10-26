@@ -188,7 +188,12 @@ public abstract class AbstractEditorScreen extends Screen {
 
    protected int getToolButtonHeight() {
       int scale = this.getGuiScale();
-      return scale >= 4 ? 18 : 20;
+      return scale >= 4 ? 16 : 20;
+   }
+
+   /** Vertical gap between stacked buttons in the left column. */
+   protected int getToolButtonGap() {
+      return this.getGuiScale() >= 4 ? 2 : 4;
    }
 
    protected boolean showExtraButtons() {
@@ -280,6 +285,7 @@ public abstract class AbstractEditorScreen extends Screen {
       int toolY = 30;
       int tbw = this.getToolButtonWidth();
       int tbh = this.getToolButtonHeight();
+      int gap = this.getToolButtonGap();
 
       for (EditorTool tool : EditorTool.values()) {
          EditorTool t = tool;
@@ -288,10 +294,10 @@ public abstract class AbstractEditorScreen extends Screen {
          this.addRenderableWidget(
             Button.builder(Component.literal(label), btn -> this.currentTool = t).pos(5, toolY).size(tbw, tbh).build()
          );
-         toolY += tbh + 4;
+         toolY += tbh + gap;
       }
 
-      toolY += 10;
+      toolY += gap * 2;
       if (this.showUndoRedo()) {
          String undoHint = settings.showToolHints ? settings.getKeyName("undo") : "";
          String redoHint = settings.showToolHints ? settings.getKeyName("redo") : "";
@@ -310,7 +316,7 @@ public abstract class AbstractEditorScreen extends Screen {
                .size(halfBtnW, tbh)
                .build()
          );
-         toolY += tbh + 4;
+         toolY += tbh + gap;
       }
 
       if (this.showExtraButtons()) {
@@ -322,7 +328,7 @@ public abstract class AbstractEditorScreen extends Screen {
                .size(tbw, tbh)
                .build()
          );
-         toolY += tbh + 4;
+         toolY += tbh + gap;
          int halfBtnW = (tbw - 4) / 2;
          this.addRenderableWidget(Button.builder(Component.literal("Zoom +"), btn -> {
             if (this.zoom < this.getMaxZoom()) {
@@ -348,7 +354,7 @@ public abstract class AbstractEditorScreen extends Screen {
          };
          btn.setMessage(Component.literal("Size: " + this.toolSize + "px"));
       }).pos(5, toolY).size(tbw, tbh).build());
-      toolY += tbh + 4;
+      toolY += tbh + gap;
       toolY = this.addExtraButtons(toolY);
       int resetBtnW = rsw - 10;
       int resetX = this.width - rsw + 5;
@@ -367,13 +373,13 @@ public abstract class AbstractEditorScreen extends Screen {
       );
       this.addRenderableWidget(
          Button.builder(Component.literal("§aApply Live"), btn -> this.applyLive())
-            .pos(5, this.height - 78)
+            .pos(5, this.height - 4 - 3 * tbh - 2 * gap)
             .size(tbw, tbh)
             .build()
       );
       this.addRenderableWidget(
          Button.builder(Component.literal("§6Export Pack"), btn -> Minecraft.getInstance().setScreen(new ExportScreen(this)))
-            .pos(5, this.height - 54)
+            .pos(5, this.height - 4 - 2 * tbh - gap)
             .size(tbw, tbh)
             .build()
       );
@@ -385,7 +391,7 @@ public abstract class AbstractEditorScreen extends Screen {
          } else {
             Minecraft.getInstance().setScreen(new BrowseScreen());
          }
-      }).pos(5, this.height - 30).size(tbw, tbh).build());
+      }).pos(5, this.height - 4 - tbh).size(tbw, tbh).build());
       this.addRenderableWidget(Button.builder(Component.literal("§cClose"), btn -> {
          if (settings.autoApplyLive) {
             this.applyLive();
