@@ -70,7 +70,7 @@ public class MobPreviewWidget {
             Quaternionf modelQuat = new Quaternionf().rotateX((float)Math.toRadians(this.rotationPitch));
 
             try {
-               InventoryScreen.renderEntityInInventory(context, this.x, this.y, this.x + this.width, this.y + this.height, entitySize, 0.0625F, mouseX, mouseY, livingEntity);
+               InventoryScreen.renderEntityInInventoryFollowsMouse(context, this.x, this.y, this.x + this.width, this.y + this.height, entitySize, 0.0625F, mouseX, mouseY, livingEntity);
             } catch (Exception e) {
                context.drawString(client.font, "Preview N/A", this.x + 10, this.y + this.height / 2, 16733525, false);
             }
